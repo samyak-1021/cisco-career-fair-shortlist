@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Career Fair Eligibility Shortlist</title>
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --card: #ffffff;
+      --ink: #1d1d1f;
+      --muted: #6e6e73;
+      --line: #e2e2e6;
+      --accent: #0071e3;
+      --ok-bg: #e8f6ee; --ok-ink: #1a7f3c;
+      --no-bg: #fdecec; --no-ink: #c0392b;
+      --warn-bg: #fff4e5; --warn-ink: #a15c00; --warn-line: #f0c37a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.45; padding: 32px 16px;
+    }
+    .wrap { max-width: 960px; margin: 0 auto; }
+    header { text-align: center; margin-bottom: 28px; }
+    header h1 { font-size: 28px; font-weight: 600; margin: 0 0 6px; letter-spacing: -0.02em; }
+    header p { color: var(--muted); margin: 0; font-size: 15px; }
+    .card {
+      background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+      padding: 22px 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .card h2 { font-size: 17px; font-weight: 600; margin: 0 0 16px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+    label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 5px; }
+    input {
+      width: 100%; padding: 9px 11px; font-size: 15px; color: var(--ink);
+      border: 1px solid var(--line); border-radius: 10px; background: #fafafa;
+    }
+    input:focus { outline: none; border-color: var(--accent); background: #fff; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+    button {
+      font-size: 15px; padding: 10px 18px; border-radius: 10px; border: 1px solid transparent;
+      cursor: pointer; font-weight: 500;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #005bbf; }
+    .btn-ghost { background: #fff; color: var(--accent); border-color: var(--line); }
+    .btn-ghost:hover { background: #f0f6ff; }
+    table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+    th { color: var(--muted); font-weight: 600; }
+    td:first-child { font-weight: 600; }
+    .banner {
+      display: none; background: var(--warn-bg); color: var(--warn-ink);
+      border: 1px solid var(--warn-line); border-radius: 12px; padding: 12px 16px;
+      font-size: 14px; margin-bottom: 20px;
+    }
+    .summary { display: flex; gap: 12px; margin-bottom: 16px; }
+    .pill { font-size: 14px; font-weight: 600; padding: 6px 14px; border-radius: 999px; }
+    .pill.ok { background: var(--ok-bg); color: var(--ok-ink); }
+    .pill.no { background: var(--no-bg); color: var(--no-ink); }
+    .result {
+      border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px;
+    }
+    .result-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .result-title { font-weight: 600; font-size: 15px; }
+    .result-id { color: var(--muted); font-size: 13px; font-weight: 400; }
+    .badge { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; letter-spacing: 0.02em; }
+    .badge.ok { background: var(--ok-bg); color: var(--ok-ink); }
+    .badge.no { background: var(--no-bg); color: var(--no-ink); }
+    .reasons { margin: 10px 0 0; padding-left: 18px; }
+    .reasons li { font-size: 13.5px; color: var(--no-ink); margin-bottom: 3px; }
+    .empty { color: var(--muted); font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Career Fair Eligibility Shortlist</h1>
+      <p>Check a student profile against the fixed career-fair roles.</p>
+    </header>
+
+    <!-- Profile form -->
+    <section class="card">
+      <h2>Student Profile</h2>
+      <div class="grid">
+        <div><label for="branch">Branch</label><input id="branch" type="text" /></div>
+        <div><label for="cgpa">CGPA (0–10)</label><input id="cgpa" type="text" /></div>
+        <div><label for="gradYear">Graduation year</label><input id="gradYear" type="text" /></div>
+        <div><label for="backlogs">Active backlogs</label><input id="backlogs" type="text" /></div>
+      </div>
+      <div style="margin-top:14px;">
+        <label for="skills">Skills (comma-separated)</label>
+        <input id="skills" type="text" placeholder="e.g. Git, Python, SQL" />
+      </div>
+      <div class="actions">
+        <button class="btn-primary" id="evaluateBtn">Evaluate</button>
+        <button class="btn-ghost" id="sampleBtn">Load sample</button>
+        <button class="btn-ghost" id="resetBtn">Reset</button>
+      </div>
+    </section>
+
+    <!-- Roles reference (generated from ROLES) -->
+    <section class="card">
+      <h2>Career-Fair Roles</h2>
+      <div style="overflow-x:auto;">
+        <table id="rolesTable">
+          <thead>
+            <tr>
+              <th>ID</th><th>Role</th><th>Branches</th><th>Min CGPA</th>
+              <th>Grad years</th><th>Max backlogs</th><th>Required skills</th>
+            </tr>
+          </thead>
+          <tbody id="rolesBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Validation banner -->
+    <div class="banner" id="banner"></div>
+
+    <!-- Results -->
+    <section class="card">
+      <h2>Results</h2>
+      <div class="summary" id="summary" hidden>
+        <span class="pill ok" id="pillEligible"></span>
+        <span class="pill no" id="pillIneligible"></span>
+      </div>
+      <div id="results"><p class="empty">Load the sample or enter a profile, then click Evaluate.</p></div>
+    </section>
+  </div>
+
+  <script src="logic.js"></script>
+  <script>
+    // ---- element handles ----
+    const el = (id) => document.getElementById(id);
+    const fields = ['branch', 'cgpa', 'gradYear', 'backlogs', 'skills'];
+
+    // ---- render the roles reference table from the ROLES data (not hardcoded) ----
+    function renderRolesTable() {
+      const body = el('rolesBody');
+      body.textContent = '';
+      ROLES.forEach((role) => {
+        const tr = document.createElement('tr');
+        const cells = [
+          role.id,
+          role.title,
+          role.branches.join(', '),
+          String(role.minCgpa),
+          role.gradYears.join(', '),
+          String(role.maxBacklogs),
+          role.requiredSkills.join(', '),
+        ];
+        cells.forEach((text) => {
+          const td = document.createElement('td');
+          td.textContent = text; // textContent, never innerHTML — no injection
+          tr.appendChild(td);
+        });
+        body.appendChild(tr);
+      });
+    }
+
+    // ---- form helpers ----
+    function readForm() {
+      return {
+        branch: el('branch').value,
+        cgpa: el('cgpa').value,
+        gradYear: el('gradYear').value,
+        backlogs: el('backlogs').value,
+        skills: el('skills').value,
+      };
+    }
+    function loadProfileIntoForm(p) {
+      el('branch').value = p.branch;
+      el('cgpa').value = String(p.cgpa);
+      el('gradYear').value = String(p.gradYear);
+      el('backlogs').value = String(p.backlogs);
+      el('skills').value = p.skills.join(', ');
+    }
+
+    // ---- rendering ----
+    function clearResults() {
+      el('summary').hidden = true;
+      el('pillEligible').textContent = '';
+      el('pillIneligible').textContent = '';
+      const box = el('results');
+      box.textContent = '';
+      const p = document.createElement('p');
+      p.className = 'empty';
+      p.textContent = 'Load the sample or enter a profile, then click Evaluate.';
+      box.appendChild(p);
+    }
+    function showBanner(code) {
+      const b = el('banner');
+      b.textContent = '⚠ ' + code + ' — please fix the highlighted field and evaluate again.';
+      b.style.display = 'block';
+    }
+    function hideBanner() { el('banner').style.display = 'none'; }
+
+    function renderResults(results, counts) {
+      el('pillEligible').textContent = counts.eligible + ' eligible';
+      el('pillIneligible').textContent = counts.ineligible + ' ineligible';
+      el('summary').hidden = false;
+
+      const box = el('results');
+      box.textContent = '';
+      results.forEach((r) => {
+        const card = document.createElement('div');
+        card.className = 'result';
+
+        const head = document.createElement('div');
+        head.className = 'result-head';
+
+        const titleWrap = document.createElement('div');
+        const title = document.createElement('span');
+        title.className = 'result-title';
+        title.textContent = r.title;
+        const id = document.createElement('span');
+        id.className = 'result-id';
+        id.textContent = '  ' + r.id;
+        titleWrap.appendChild(title);
+        titleWrap.appendChild(id);
+
+        const badge = document.createElement('span');
+        badge.className = 'badge ' + (r.status === 'ELIGIBLE' ? 'ok' : 'no');
+        badge.textContent = r.status;
+
+        head.appendChild(titleWrap);
+        head.appendChild(badge);
+        card.appendChild(head);
+
+        if (r.reasons.length) {
+          const ul = document.createElement('ul');
+          ul.className = 'reasons';
+          r.reasons.forEach((reason) => {
+            const li = document.createElement('li');
+            li.textContent = reason;
+            ul.appendChild(li);
+          });
+          card.appendChild(ul);
+        }
+        box.appendChild(card);
+      });
+    }
+
+    // ---- actions ----
+    function onEvaluate() {
+      const out = runEvaluation(readForm(), ROLES);
+      if (!out.ok) {
+        showBanner(out.error);   // invalid field: show message + clear stale results
+        clearResults();
+        return;
+      }
+      hideBanner();
+      renderResults(out.results, out.counts);
+    }
+    function onSample() {
+      hideBanner();
+      loadProfileIntoForm(BUILTIN_PROFILE);
+      clearResults();
+    }
+    function onReset() {
+      hideBanner();
+      loadProfileIntoForm(BUILTIN_PROFILE);
+      renderRolesTable();
+      clearResults();
+    }
+
+    // ---- wire up ----
+    el('evaluateBtn').addEventListener('click', onEvaluate);
+    el('sampleBtn').addEventListener('click', onSample);
+    el('resetBtn').addEventListener('click', onReset);
+
+    renderRolesTable();
+    loadProfileIntoForm(BUILTIN_PROFILE); // start with the sample loaded for convenience
+  </script>
+</body>
+</html>

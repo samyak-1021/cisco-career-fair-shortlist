@@ -41,6 +41,10 @@ doubles as the process record for the interview.
   failed rule, so evaluation collects all failures rather than stopping at the first.
 - **Field validation does short-circuit.** An invalid profile field reports a single `INVALID_*`
   code and clears prior results/counts — a malformed profile can't be meaningfully evaluated.
+- **Numeric validation is stricter than the literal spec (documented assumption).** Only plain
+  decimal input is accepted; hex/scientific forms such as `0x7EB` or `2e3` are rejected even though
+  JavaScript's `Number()` would treat them as valid, because a human filling the form never types
+  them. Caught during review — a test was added first, then a regex guard.
 
 ## Constraints Given to the AI
 
